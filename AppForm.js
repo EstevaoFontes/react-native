@@ -1,8 +1,28 @@
-import { StatusBar } from "expo-status-bar";
-import React from 'react'
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import DataBase from './DataBase';
 
-export default function AppForm() {
+ export default function AppForm({ navigation }) {
+
+    const [description, setDescription] = useState('');
+    const [quantity, setQuantity] = useState('');
+
+    function handleDescriptionChange(description) {
+        setDescription(description);
+    }
+
+
+    function handleQuantityChange(quantity) {
+        setQuantity(quantity);
+    }
+
+    async function handleButtonPress() {
+        const listItem = { description, quantity: parseInt(quantity) };
+        DataBase.saveItem(listItem)
+            .then(response => navigation.navigate("AppList", listItem));
+    }
+
+
     return (
         <View style={styles.cotainer}>
             <Text style={styles.title}>Item para comprar</Text>
@@ -11,14 +31,20 @@ export default function AppForm() {
                     style={styles.input}
                     placeholder="O que está faltando em casa?"
                     clearButtonMode='always'
+                    onChangeText={handleDescriptionChange}
                 />
                 <TextInput
                     style={styles.input}
+                    onChangeText={handleQuantityChange}
                     placeholder='Digite uma quantidade'
                     keyboardType='{numeric}'
                     clearButtonMode="always"
                 />
-                <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+                <TouchableOpacity
+                    style={styles.button}
+                    activeOpacity={0.8}
+                    onPress={handleButtonPress}
+                >
                     <Text style={styles.buttonText}>Salvar</Text>
                 </TouchableOpacity>
             </View>
